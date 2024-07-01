@@ -1,0 +1,46 @@
+﻿@page "/Usuario/Index"
+<h3>Index</h3>
+@using UsersBlazorApp.Data.Models;
+
+<EditForm Model="ListaUsuarios" class="border shadow-lg p-3 rounded">
+    <div class="card-header bg-primary text-white text-center py-2 rounded">
+        <h3 style="font-weight: bold;" class="mb-0 font-weight-bold">Consulta Usuarios</h3>
+    </div>
+    <div class="card-body">
+        <div class="row mb-3 align-items-end">
+
+            @*Filtro*@
+            
+
+            @*Barra Busqueda*@
+           
+
+            @*Boton Crear*@
+            <div class="col-md-3 text-end">
+                <a href="/Usuario/Create" class="btn btn-success" type="button"><span class="bi bi-floppy"></span> Crear </a>
+            </div>
+        </div>
+    </div>
+
+    @*Tabla*@
+    <table class="table table-bordered text-center">
+        <thead class="bg-primary text-white">
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Claim</th>
+                <th>Ver</th>
+                <th>Editar</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            
+        </tbody>
+    </table>
+</EditForm>
+@code {
+    public List<AspNetUsers> ListaUsuarios = new List<AspNetUsers>();
+}

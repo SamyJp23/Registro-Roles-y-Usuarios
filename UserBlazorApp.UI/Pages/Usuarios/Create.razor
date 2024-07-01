@@ -1,0 +1,119 @@
+﻿@page "/Usuario/Create"
+@inject NavigationManager navigationManager
+
+@using UsersBlazorApp.Data.Models
+
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<EditForm Model="AspNetUsers" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="card shadow-lg border-0 rounded" style="background-color: #f8f9fa;">
+        <div class="card-header bg-primary text-white" style="text-align: center;">
+            <h3> <i class="fas fa-clipboard-list"></i> Registro de Usuarios</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="Id" class="form-label">Id:</label>
+                    <div class="input-group">
+                        <div style="width: 40%; height: 1em;">
+                            <InputNumber @bind-Value="AspNetUsers.Id" class="form-control" style="font-size: 0.8em;" aria-describedby="BotonBuscar" />
+                            <ValidationMessage For="@(() => AspNetUsers.Id)" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="Claim" class="form-label">Seleccione el Claim:</label>
+                    <select class="form-select" @bind="selectedClaim">
+                        <option value="">Seleccionar...</option>
+                        <option value="claim1">Claim 1</option>
+                        <option value="claim2">Claim 2</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="Nombre" class="form-label">Nombre:</label>
+                <InputText @bind-Value="AspNetUsers.UserName" class="form-control" />
+                <ValidationMessage For="@(() => AspNetUsers.UserName)" />
+            </div>
+            
+            <div class="mb-3">
+                <label for="Email" class="form-label">Email:</label>
+                <InputText @bind-Value="AspNetUsers.Email" class="form-control" />
+                <ValidationMessage For="@(() => AspNetUsers.Email)" />
+            </div>
+           
+            <div class="mb-3">
+                <label for="EmailConfirmed" class="form-label">Correo Electrónico Confirmado:</label>
+                <InputCheckbox @bind-Value="AspNetUsers.EmailConfirmed" class="form-check-input" />
+                <ValidationMessage For="@(() => AspNetUsers.EmailConfirmed)" />
+            </div>
+            
+            
+            
+            <div class="mb-3">
+                <label for="PhoneNumber" class="form-label">Número de Teléfono:</label>
+                <InputText id="PhoneNumber" @bind-Value="AspNetUsers.PhoneNumber" class="form-control" />
+                <ValidationMessage For="@(() => AspNetUsers.PhoneNumber)" />
+            </div>
+            <div class="mb-3">
+                <label for="PhoneNumberConfirmed" class="form-label">Número de Teléfono Confirmado:</label>
+                <InputCheckbox @bind-Value="AspNetUsers.PhoneNumberConfirmed" class="form-check-input" />
+                <ValidationMessage For="@(() => AspNetUsers.PhoneNumberConfirmed)" />
+            </div>
+            <div class="mb-3">
+                <label for="TwoFactorEnabled" class="form-label">Doble Factor de Autenticación:</label>
+                <InputCheckbox id="TwoFactorEnabled" @bind-Value="AspNetUsers.TwoFactorEnabled" class="form-check-input" />
+                <ValidationMessage For="@(() => AspNetUsers.TwoFactorEnabled)" />
+            </div>
+        </div>
+        <div class="card-footer bg-light d-flex justify-content-center mt-3">
+            <div class="btn-group">
+                @*Boton Nuevo*@
+                <button type="button" class="btn btn-outline-primary ml-2" @onclick="Nuevo"><span class="bi bi-plus"></span> Nuevo </button>
+                @*Boton Guardar*@
+                <button type="submit" class="btn btn-outline-success ml-2"><span class="bi bi-check-circle-fill"></span> Guardar </button>
+                @*Boton Retroceder*@
+                <button type="button" class="btn btn-outline-danger" @onclick="Volver"><span class="bi bi-arrow-bar-left"></span> Retroceder </button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    public AspNetUsers AspNetUsers { get; set; } = new AspNetUsers();
+    private string selectedClaim;
+
+    private async Task Guardar()
+    {
+        var apiUrl = "http://localhost:7097";
+    var url = $"{apiUrl}/api/tu-controller/Agregar?userName={AspNetUsers.UserName}&email={AspNetUsers.Email}&phoneNumber={AspNetUsers.PhoneNumber}&claimType={selectedClaim}&claimValue=value";
+
+        var response = await Http.PostAsync(url, null);
+        if (response.IsSuccessStatusCode)
+        {
+            // Manejar el éxito
+            Console.WriteLine("Usuario registrado con éxito.");
+        }
+        else
+        {
+            // Manejar el error
+            Console.WriteLine("Error al registrar el usuario.");
+        }
+    }
+
+    private void Nuevo()
+    {
+        AspNetUsers = new AspNetUsers();
+        selectedClaim = string.Empty;
+    }
+
+    private void Volver()
+    {
+        NavigationManager.NavigateTo("/Usuario/Index");
+    }
+}

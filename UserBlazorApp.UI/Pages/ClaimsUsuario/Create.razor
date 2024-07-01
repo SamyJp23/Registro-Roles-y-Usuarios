@@ -1,0 +1,75 @@
+﻿@page "/Claims/Create"
+<h3>Create</h3>
+@using UsersBlazorApp.Data.Models;
+@inject NavigationManager navigationManager
+
+
+<EditForm Model="AspNetClaims" OnValidSubmit="Guardar">
+     <DataAnnotationsValidator />
+    <div class="card shadow-lg border-0 rounded" style="background-color: #f8f9fa;">
+        <div class="card-header bg-primary text-white" style="text-align: center;">
+            <h3> <i class="fas fa-clipboard-list"></i> Registro de Claims Usuarios</h3>
+        </div>
+        <div class="card-body">
+               
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="Id" class="form-label">Id:</label>
+                        <div class="input-group">
+                            <div style="width: 40%; height: 1em;">
+                                <InputNumber @bind-Value="AspNetClaims.Id" class="form-control" style="font-size: 0.8em;" aria-describedby="BotonBuscar" />
+                                <ValidationMessage For="@(() => AspNetClaims.Id)" />
+                            </div>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-3 mb-3">
+                        <label for="Claim" class="form-label">Seleccione el usuario:</label>
+                        <select class="form-select">
+                       
+                        
+                        </select>
+                    </div>
+               </div
+
+           
+           <div class="mb-3">
+                    <label for="Tipo" class="form-label">Tipo:</label>
+                    <InputText @bind-Value="AspNetClaims.ClaimType" class="form-control" />
+                <ValidationMessage For="@(() => AspNetClaims.ClaimType)" />
+          </div>
+           
+            <div class="mb-3">
+                <label for="Value" class="form-label">Claim Value:</label>
+                <InputText @bind-Value="AspNetClaims.ClaimValue" class="form-control" />
+                <ValidationMessage For="@(() => AspNetClaims.ClaimValue)" />
+            </div>
+        </div>
+     </div>
+         <div class="card-footer bg-light d-flex justify-content-center mt-3">
+             <div class="btn-group">
+                @*Boton Nuevo*@
+                <button type="button" class="btn btn-outline-primary ml-2" @onclick="Nuevo"><span class="bi bi-plus"></span> Nuevo </button>
+                @*Boton Guardar*@
+                <button type="submit" class="btn btn-outline-success ml-2"><span class="bi bi-check-circle-fill"></span> Guardar </button>
+                @*Boton Retroceder*@
+                <button type="button"  class="btn btn-outline-danger" @onclick="Volver"><span class="bi bi-arrow-bar-left"></span> Retroceder </button>
+            </div>
+         </div>
+    </EditForm>
+@code {
+    public AspNetUserClaims AspNetClaims { get; set; } = new AspNetUserClaims();
+
+    public void Guardar()
+    {
+
+    }
+    public void Nuevo()
+    {
+
+    }
+    public void Volver()
+    {
+        navigationManager.NavigateTo("/Claims/Index");
+    }
+}

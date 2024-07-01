@@ -13,6 +13,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<UsersDbContext>(o => o.UseSqlServer(builder.Configuration.GetConnectionString("ConStr")));
 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

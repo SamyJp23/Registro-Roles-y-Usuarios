@@ -37,17 +37,41 @@ public class UserController(UsersDbContext Context) : ControllerBase
 
         return Ok(claims);
     }
+    [HttpPost("Agregar")]
+    public async Task<IActionResult> Agregar(AspNetUsers user)
+    {
+  
+        var nuevo = new AspNetUsers
+        {
+            UserName = user.UserName,
+            Email = user.Email,
+            PhoneNumber = user.PhoneNumber,
+            EmailConfirmed = user.EmailConfirmed,
+            PhoneNumberConfirmed = user.PhoneNumberConfirmed,
+            TwoFactorEnabled = user.TwoFactorEnabled,
+           
+        };
 
+        Context.AspNetUsers.Add(nuevo);
+        await Context.SaveChangesAsync();
+
+        return Ok(nuevo);
+    }
+    [HttpGet("Listar")]
+    public async Task<IActionResult> GetRoleClaims()
+    {
+        var user = await Context.AspNetUsers.ToListAsync();
+        return Ok(user);
+    }
+
+    public record UserDto1(int UsuarioId, List<ClaimDto> Claims) { }
+
+    public class UserDto
+    {
+        public int UsuarioId { get; set; }
+        public List<ClaimDto> Claims { get; set; } = [];
+    }
+
+    public record ClaimDto(string? Name) { }
 
 }
-
-
-public record UserDto1(int UsuarioId, List<ClaimDto> Claims) { }
-
-public class UserDto
-{
-    public int UsuarioId { get; set; }
-    public List<ClaimDto> Claims { get; set; } = [];
-}
-
-public record ClaimDto(string? Name) { }
