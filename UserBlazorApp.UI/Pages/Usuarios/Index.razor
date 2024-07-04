@@ -1,4 +1,5 @@
 ﻿@page "/Usuario/Index"
+@inject UsersInterface<AspNetUsers> userService
 <h3>Index</h3>
 @using UsersBlazorApp.Data.Models;
 
@@ -8,12 +9,27 @@
     </div>
     <div class="card-body">
         <div class="row mb-3 align-items-end">
-
             @*Filtro*@
-            
+            <div class="col-md-3">
+                <label for="Filtro" class="form-label">Filtrar por:</label>
+                <select @bind="filtro" class="form-select">
+                    <option value="id">ID</option>
+                    <option value="nombre">Nombre</option>
+                    <option value="sueldo">Sueldo</option>
+                    <option value="tipo">Tipo</option>
+                </select>
+            </div>
 
             @*Barra Busqueda*@
-           
+            <div class="col-md-6">
+                <label for="ValorFiltro" class="form-label">Búsqueda:</label>
+                <div class="input-group">
+                    <input @bind="valorFiltro" class="form-control" placeholder="Buscar" />
+                    <button @onclick="Buscar" class="btn btn-outline-primary" type="button">
+                        <span class="bi bi-search"></span> Buscar
+                    </button>
+                </div>
+            </div>
 
             @*Boton Crear*@
             <div class="col-md-3 text-end">
@@ -29,18 +45,58 @@
                 <th>Id</th>
                 <th>Nombre</th>
                 <th>Email</th>
-                <th>Claim</th>
+                <th>Telefono</th>
+                <th>Rol</th>
                 <th>Ver</th>
                 <th>Editar</th>
                 <th>Eliminar</th>
             </tr>
         </thead>
-
         <tbody>
-            
+            @foreach (var usuario in ListaUsuarios)
+            {
+                <tr>
+                     <td>@usuario.Id</td>
+                    <td>@usuario.UserName</td>
+                    <td>@usuario.Email</td>
+                    <td>@usuario.PhoneNumber</td>
+                    
+                    <td>
+
+                        @*Boton Details*@
+                        <a href= style="border: none; background-color: transparent;" class="btn-detalle">
+                            <span class="bi bi-info-circle-fill" style="font-size: 2rem;"></span>
+                        </a>
+
+                    </td>
+                    <td>
+                        @*Boton Editar*@
+                        <a href= style="border: none; background-color: transparent;" class="btn-editar">
+                            <span class="bi bi-marker-tip" style="font-size: 2rem;"></span>
+                        </a>
+                    </td>
+
+                    <td>
+                        @*Boton Eliminar*@
+                        <a href= style="border: none; background-color: transparent;" class="btn-eliminar">
+                            <span class="bi bi-dash-circle-fill" style="font-size: 2rem;"></span>
+                        </a>
+                    </td>
+                </tr>
+            }
         </tbody>
     </table>
 </EditForm>
 @code {
-    public List<AspNetUsers> ListaUsuarios = new List<AspNetUsers>();
+    public List<AspNetUsers> ListaUsuarios { get; set; } = new List<AspNetUsers>();
+    private string valorFiltro = "";
+    private string filtro = "Id";
+    protected override async Task OnInitializedAsync()
+    {
+        ListaUsuarios = await userService.GetAllAsync();
+    }
+    public void Buscar()
+    {
+        
+    }
 }
