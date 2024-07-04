@@ -8,7 +8,27 @@
     <div class="card-body">
         <div class="row mb-3 align-items-end">
 
+            @*Filtro*@
+            <div class="col-md-3">
+                <label for="Filtro" class="form-label">Filtrar por:</label>
+                <select @bind="filtro" class="form-select">
+                    <option value="id">ID</option>
+                    <option value="nombre">Nombre</option>
+                    <option value="sueldo">Sueldo</option>
+                    <option value="tipo">Tipo</option>
+                </select>
+            </div>
 
+            @*Barra Busqueda*@
+            <div class="col-md-6">
+                <label for="ValorFiltro" class="form-label">Búsqueda:</label>
+                <div class="input-group">
+                    <input @bind="valorFiltro" class="form-control" placeholder="Buscar" />
+                    <button @onclick="Buscar" class="btn btn-outline-primary" type="button">
+                        <span class="bi bi-search"></span> Buscar
+                    </button>
+                </div>
+            </div>
             @*Boton Crear*@
             <div class="col-md-3 text-end">
                 <a href="/ClaimRol/Create" class="btn btn-success" type="button"><span class="bi bi-floppy"></span> Crear </a>
@@ -36,4 +56,10 @@
 </EditForm>
 @code {
     public List<AspNetRoleClaims> ListaClaimsRoles = new List<AspNetRoleClaims>();
+    private string valorFiltro = "";
+    private string filtro = "Id";
+    public void Buscar()
+    {
+
+    }
 }
