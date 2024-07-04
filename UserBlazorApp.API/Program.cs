@@ -1,5 +1,6 @@
 
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 using UserBlazorApp.API.Context;
 using UserBlazorApp.API.Services;
 using UsersBlazorApp.Data.Interfaces;

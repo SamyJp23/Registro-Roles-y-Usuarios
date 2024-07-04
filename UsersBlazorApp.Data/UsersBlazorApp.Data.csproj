@@ -12,10 +12,6 @@
 	  <EmbeddedResource Remove="Modelos\**" />
 	  <None Remove="Modelos\**" />
 	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="Models\" />
-	</ItemGroup>
 	
 	<ItemGroup>
 		<PackageReference Include="Mapster" Version="7.4.0" />

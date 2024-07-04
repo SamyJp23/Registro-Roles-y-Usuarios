@@ -1,6 +1,6 @@
 ﻿@page "/Roles/Index"
 <h3>Index</h3>
-
+@inject UsersInterface<AspNetRoles> roleService
 
 <EditForm Model="ListaRoles" class="border shadow-lg p-3 rounded">
     <div class="card-header bg-primary text-white text-center py-2 rounded">
@@ -10,10 +10,26 @@
         <div class="row mb-3 align-items-end">
 
             @*Filtro*@
-
+            <div class="col-md-3">
+                <label for="Filtro" class="form-label">Filtrar por:</label>
+                <select @bind="filtro" class="form-select">
+                    <option value="id">ID</option>
+                    <option value="nombre">Nombre</option>
+                    <option value="sueldo">Sueldo</option>
+                    <option value="tipo">Tipo</option>
+                </select>
+            </div>
 
             @*Barra Busqueda*@
-
+            <div class="col-md-6">
+                <label for="ValorFiltro" class="form-label">Búsqueda:</label>
+                <div class="input-group">
+                    <input @bind="valorFiltro" class="form-control" placeholder="Buscar" />
+                    <button @onclick="Buscar" class="btn btn-outline-primary" type="button">
+                        <span class="bi bi-search"></span> Buscar
+                    </button>
+                </div>
+            </div>
 
             @*Boton Crear*@
             <div class="col-md-3 text-end">
@@ -37,9 +53,51 @@
         </thead>
 
         <tbody>
+
+            @foreach (var roles in ListaRoles)
+            {
+                <tr>
+                    <td>@roles.Id</td>
+                    <td>@roles.Name</td>
+                   
+                    
+
+                    <td>
+
+                        @*Boton Details*@
+                        <a href= style="border: none; background-color: transparent;" class="btn-detalle">
+                            <span class="bi bi-info-circle-fill" style="font-size: 2rem;"></span>
+                        </a>
+
+                    </td>
+                    <td>
+                        @*Boton Editar*@
+                        <a href= style="border: none; background-color: transparent;" class="btn-editar">
+                            <span class="bi bi-marker-tip" style="font-size: 2rem;"></span>
+                        </a>
+                    </td>
+
+                    <td>
+                        @*Boton Eliminar*@
+                        <a href= style="border: none; background-color: transparent;" class="btn-eliminar">
+                            <span class="bi bi-dash-circle-fill" style="font-size: 2rem;"></span>
+                        </a>
+                    </td>
+                </tr>
+            }
         </tbody>
     </table>
 </EditForm>
 @code {
-    public List<AspNetRoles> ListaRoles = new List<AspNetRoles>();
+    public List<AspNetRoles> ListaRoles { get; set; } = new List<AspNetRoles>();
+    private string valorFiltro = "";
+    private string filtro = "Id";
+    protected override async Task OnInitializedAsync()
+    {
+        ListaRoles = await roleService.GetAllAsync();
+    }
+    public void Buscar()
+    {
+        
+    }
 }
