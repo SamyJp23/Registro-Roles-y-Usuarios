@@ -1,9 +1,9 @@
 ﻿@page "/Roles/Create"
 @inject NavigationManager navigationManager
-
+@inject UsersInterface<AspNetRoles> roleService
 <h3>Create</h3>
 
-<EditForm Model="@AspNetRole" OnValidSubmit="@HandleValidSubmit">
+<EditForm Model="AspNetRole" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
@@ -13,11 +13,7 @@
         </div>
         <div class="card-body">
             <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="RoleId" class="form-label">Rol Id:</label>
-                    <InputNumber id="RoleId" @bind-Value="AspNetRole.Id" class="form-control" />
-                    <ValidationMessage For="@(() => AspNetRole.Id)" />
-                </div>
+                
                 <div class="col-md-6 mb-3">
                     <label for="RoleName" class="form-label">Rol:</label>
                     <InputText id="RoleName" @bind-Value="AspNetRole.Name" class="form-control" />
@@ -28,30 +24,7 @@
        
     </div>
 
-    <div class="card shadow-lg border-0 rounded mt-3" style="background-color: #f8f9fa;">
-        <div class="card-header bg-primary text-white" style="text-align: center;">
-            <h3> <i class="fas fa-info-circle"></i> Detalles Rol</h3>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="ClaimType" class="form-label">Claim:</label>
-                    <select id="ClaimType" @bind="ClaimType" class="form-select">
-                        <option value="">Seleccione un Claim</option>
-                        @foreach (var claim in ClaimTypes)
-                        {
-                            <option value="@claim">@claim</option>
-                        }
-                    </select>
-                    <ValidationMessage For="@(() => ClaimType)" />
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label for="ClaimValue" class="form-label">Valor:</label>
-                    <InputText id="ClaimValue" @bind-Value="ClaimValue" class="form-control" />
-                    <ValidationMessage For="@(() => ClaimValue)" />
-                </div>
-            </div>
-        </div>
+  
         <div class="card-footer bg-light d-flex justify-content-center mt-3">
             <div class="btn-group">
                 <button type="button" class="btn btn-outline-primary ml-2" @onclick="Nuevo"><span class="bi bi-plus"></span> Nuevo </button>
@@ -59,7 +32,7 @@
                 <a type="button" href="/Roles/Index" class="btn btn-outline-danger"><span class="bi bi-arrow-bar-left"></span> Retroceder </a>
             </div>
         </div>
-    </div>
+    
 </EditForm>
 
 @code {
@@ -68,17 +41,13 @@
     private string ClaimValue { get; set; }
     private List<string> ClaimTypes { get; set; } = new List<string> { "Claim1", "Claim2", "Claim3" };
 
-    private void HandleValidSubmit()
+    public async Task Guardar()
     {
-        // Lógica para manejar la sumisión válida del formulario
-        Console.WriteLine("Formulario enviado exitosamente");
+        var guardar = await roleService.AddAsync(AspNetRole);
     }
 
 
-    public void Guardar()
-    {
-
-    }
+    
     public void Nuevo()
     {
 
