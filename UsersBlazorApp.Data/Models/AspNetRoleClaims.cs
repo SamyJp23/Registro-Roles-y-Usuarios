@@ -8,6 +8,7 @@ namespace UsersBlazorApp.Data.Models;
 
 public partial class AspNetRoleClaims
 {
+
     [Key]
     public int Id { get; set; }
 
@@ -20,4 +21,5 @@ public partial class AspNetRoleClaims
     [ForeignKey("RoleId")]
     [InverseProperty("AspNetRoleClaims")]
     public virtual AspNetRoles Role { get; set; } = null!;
+
 }

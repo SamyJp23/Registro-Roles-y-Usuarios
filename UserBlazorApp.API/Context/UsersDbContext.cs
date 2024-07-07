@@ -12,37 +12,62 @@ public partial class UsersDbContext : DbContext
     {
     }
 
+
+
     public virtual DbSet<AspNetRoleClaims> AspNetRoleClaims { get; set; }
 
     public virtual DbSet<AspNetRoles> AspNetRoles { get; set; }
 
     public virtual DbSet<AspNetUserClaims> AspNetUserClaims { get; set; }
 
-    public virtual DbSet<AspNetUserLogins> AspNetUserLogins { get; set; }
-
-    public virtual DbSet<AspNetUserTokens> AspNetUserTokens { get; set; }
-
     public virtual DbSet<AspNetUsers> AspNetUsers { get; set; }
 
-
+    public DbSet<AspNetUserRoles> AspNetUserRoles { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<AspNetUsers>(entity =>
         {
-            entity.HasMany(d => d.Role).WithMany(p => p.User)
-                .UsingEntity<Dictionary<string, object>>(
-                    "AspNetUserRoles",
-                    r => r.HasOne<AspNetRoles>().WithMany().HasForeignKey("RoleId"),
-                    l => l.HasOne<AspNetUsers>().WithMany().HasForeignKey("UserId"),
-                    j =>
-                    {
-                        j.HasKey("UserId", "RoleId");
-                    });
+            entity.HasMany(d => d.Role)
+                  .WithMany(p => p.User)
+                  .UsingEntity<AspNetUserRoles>(
+                      j => j.HasOne(ur => ur.Role)
+                            .WithMany(r => r.AspNetUserRoles)
+                            .HasForeignKey(ur => ur.RoleId),
+                      j => j.HasOne(ur => ur.User)
+                            .WithMany(u => u.AspNetUserRoles)
+                            .HasForeignKey(ur => ur.UserId),
+                      j =>
+                      {
+                          j.HasKey(ur => new { ur.UserId, ur.RoleId });
+                      });
         });
 
+        modelBuilder.Entity<AspNetRoles>(entity =>
+        {
+            entity.HasMany(r => r.AspNetRoleClaims)
+                  .WithOne(rc => rc.Role)
+                  .HasForeignKey(rc => rc.RoleId);
+        });
+
+        modelBuilder.Entity<AspNetUserRoles>(entity =>
+        {
+            entity.HasKey(e => new { e.UserId, e.RoleId });
+        });
+
+        modelBuilder.Entity<AspNetUserClaims>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+        });
+
+        modelBuilder.Entity<AspNetRoleClaims>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+        });
 
         OnModelCreatingPartial(modelBuilder);
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
+
 }

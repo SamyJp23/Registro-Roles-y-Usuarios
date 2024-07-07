@@ -3,10 +3,11 @@ using UserBlazorApp.API.Context;
 using UsersBlazorApp.Data.Interfaces;
 using UsersBlazorApp.Data.Models;
 
-namespace UserBlazorApp.API.Services
+namespace UserBlazorApp.API.Services;
+
+public class RolesService(UsersDbContext Contexto) : ApiInterface<AspNetRoles>
 {
-    public class RolesService(UsersDbContext Contexto) : ApiInterface<AspNetRoles>
-    {
+
         public async Task<List<AspNetRoles>> GetAllAsync()
         {
             return await Contexto.AspNetRoles.ToListAsync();
@@ -40,4 +41,5 @@ namespace UserBlazorApp.API.Services
             return await Contexto.SaveChangesAsync() > 0;
         }
     }
-}
+
+

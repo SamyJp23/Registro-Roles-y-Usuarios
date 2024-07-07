@@ -20,4 +20,6 @@ public partial class AspNetUserClaims
     [ForeignKey("UserId")]
     [InverseProperty("AspNetUserClaims")]
     public virtual AspNetUsers User { get; set; } = null!;
+
+
 }

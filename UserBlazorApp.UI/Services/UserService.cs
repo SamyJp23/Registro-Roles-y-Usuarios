@@ -14,7 +14,7 @@ public class UserService : UsersInterface<AspNetUsers>
     }
     public async Task<List<AspNetUsers>> GetAllAsync()
     {
-        return (await _httpClient.GetFromJsonAsync<List<AspNetUsers>>("https://localhost:7097/api/Users"))!;
+        return (await _httpClient.GetFromJsonAsync<List<AspNetUsers>>("https://localhost:7097/api/User"))!;
     }
 
     public async Task<AspNetUsers> GetByIdAsync(int id)
@@ -24,7 +24,7 @@ public class UserService : UsersInterface<AspNetUsers>
 
     public async Task<AspNetUsers> AddAsync(AspNetUsers entity)
     {
-        var response = await _httpClient.PostAsJsonAsync("https://localhost:7097/api/Users", entity);
+        var response = await _httpClient.PostAsJsonAsync("https://localhost:7097/api/User", entity);
         return (await response.Content.ReadFromJsonAsync<AspNetUsers>())!;
     }
 
@@ -39,4 +39,5 @@ public class UserService : UsersInterface<AspNetUsers>
         var response = await _httpClient.DeleteAsync($"api/Users/{id}");
         return response.IsSuccessStatusCode;
     }
+
 }

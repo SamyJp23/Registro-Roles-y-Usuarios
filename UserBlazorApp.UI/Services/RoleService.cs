@@ -1,6 +1,8 @@
-﻿using System.Net.Http.Json;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Net.Http.Json;
 using UsersBlazorApp.Data.Interfaces;
 using UsersBlazorApp.Data.Models;
+
 
 namespace UserBlazorApp.UI.Services;
 
@@ -14,7 +16,7 @@ public class RoleService : UsersInterface<AspNetRoles>
     }
     public async Task<List<AspNetRoles>> GetAllAsync()
     {
-        return (await _httpClient.GetFromJsonAsync<List<AspNetRoles>>("https://localhost:7097/api/Roles"))!;
+        return (await _httpClient.GetFromJsonAsync<List<AspNetRoles>>("https://localhost:7097/api/Role"))!;
     }
 
     public async Task<AspNetRoles> GetByIdAsync(int id)
@@ -24,7 +26,7 @@ public class RoleService : UsersInterface<AspNetRoles>
 
     public async Task<AspNetRoles> AddAsync(AspNetRoles entity)
     {
-        var response = await _httpClient.PostAsJsonAsync("https://localhost:7097/api/Roles", entity);
+        var response = await _httpClient.PostAsJsonAsync("https://localhost:7097/api/Role", entity);
         return (await response.Content.ReadFromJsonAsync<AspNetRoles>())!;
     }
 
@@ -39,4 +41,5 @@ public class RoleService : UsersInterface<AspNetRoles>
         var response = await _httpClient.DeleteAsync($"api/Users/{id}");
         return response.IsSuccessStatusCode;
     }
-}
+  
+    }

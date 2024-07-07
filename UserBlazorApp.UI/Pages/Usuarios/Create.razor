@@ -1,80 +1,117 @@
 ﻿@page "/Usuario/Create"
 @inject NavigationManager navigationManager
 @inject UsersInterface<AspNetUsers> userService
-@using UsersBlazorApp.Data.Models
-
-@using System.Net.Http.Json
-@inject HttpClient Http
-@inject NavigationManager NavigationManager
-
-<EditForm Model="AspNetUsers" OnValidSubmit="Guardar">
+@inject UsersInterface<AspNetRoles> roleService
+@inject UsersInterface<AspNetUserRoles> userRoleService
+<EditForm Model="Usuarios" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
     <div class="card shadow-lg border-0 rounded" style="background-color: #f8f9fa;">
         <div class="card-header bg-primary text-white" style="text-align: center;">
-            <h3> <i class="fas fa-clipboard-list"></i> Registro de Usuarios</h3>
+            <h3> <i class="fas fa-clipboard-list"></i> Crear Usuario</h3>
         </div>
         <div class="card-body">
-            <div class="row">
-               
-          
-            </div>
+            <div class="row"></div>
             <div class="mb-3">
                 <label for="Nombre" class="form-label">Nombre:</label>
-                <InputText @bind-Value="AspNetUsers.UserName" class="form-control" />
-                <ValidationMessage For="@(() => AspNetUsers.UserName)" />
+                <InputText @bind-Value="Usuarios.UserName" class="form-control" />
+                <ValidationMessage For="@(() => Usuarios.UserName)" />
             </div>
-            
             <div class="mb-3">
                 <label for="Email" class="form-label">Email:</label>
-                <InputText @bind-Value="AspNetUsers.Email" class="form-control" />
-                <ValidationMessage For="@(() => AspNetUsers.Email)" />
+                <InputText @bind-Value="Usuarios.Email" class="form-control" />
+                <ValidationMessage For="@(() => Usuarios.Email)" />
             </div>
-           
-           
-            
-            
-            
             <div class="mb-3">
                 <label for="PhoneNumber" class="form-label">Número de Teléfono:</label>
-                <InputText id="PhoneNumber" @bind-Value="AspNetUsers.PhoneNumber" class="form-control" />
-                <ValidationMessage For="@(() => AspNetUsers.PhoneNumber)" />
+                <InputText id="PhoneNumber" @bind-Value="Usuarios.PhoneNumber" class="form-control" />
+                <ValidationMessage For="@(() => Usuarios.PhoneNumber)" />
             </div>
-           
-           
+
+            <div class="card mt-3">
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <thead class="bg-primary text-white">
+                            <tr>
+                                <th>Rol</th>
+                                <th>Asignar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var role in ListaRoles)
+                            {
+                                <tr>
+                                    <td>@role.Name</td>
+                                    <td>
+                                        <input type="checkbox" @bind="roleSelections[role.Id]" />
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
         <div class="card-footer bg-light d-flex justify-content-center mt-3">
             <div class="btn-group">
-                @*Boton Nuevo*@
+               
                 <button type="button" class="btn btn-outline-primary ml-2" @onclick="Nuevo"><span class="bi bi-plus"></span> Nuevo </button>
-                @*Boton Guardar*@
+               
                 <button type="submit" class="btn btn-outline-success ml-2"><span class="bi bi-check-circle-fill"></span> Guardar </button>
-                @*Boton Retroceder*@
+               
                 <button type="button" class="btn btn-outline-danger" @onclick="Volver"><span class="bi bi-arrow-bar-left"></span> Retroceder </button>
             </div>
         </div>
     </div>
 </EditForm>
 
-@code {
-    public AspNetUsers AspNetUsers { get; set; } = new AspNetUsers();
-    private string selectedClaim;
+@code{
+    public AspNetUsers Usuarios { get; set; } = new AspNetUsers();
+    public List<AspNetRoles> ListaRoles { get; set; } = new List<AspNetRoles>();
+    private Dictionary<int, bool> roleSelections = new Dictionary<int, bool>();
 
+    protected override async Task OnInitializedAsync()
+    {
+        ListaRoles = await roleService.GetAllAsync();
+        foreach (var role in ListaRoles)
+        {
+            roleSelections[role.Id] = false;
+        }
+    }
     public async Task Guardar()
     {
-    
-        var guardar = await userService.AddAsync(AspNetUsers);
+        var user = new AspNetUsers
+            {
+                UserName = Usuarios.UserName,
+                Email = Usuarios.Email,
+                PhoneNumber = Usuarios.PhoneNumber
+            };
+
+        var guardar = await userService.AddAsync(user);
+        foreach (var roleSelection in roleSelections)
+        {
+            if (roleSelection.Value)
+            {
+                var userRole = new AspNetUserRoles
+                    {
+                        UserId = guardar.Id,
+                        RoleId = roleSelection.Key
+                    };
+
+                // Aquí agregar el userRole al contexto y guardar cambios
+                await userRoleService.AddAsync(userRole);
+            }
+        }
     }
 
-    private void Nuevo()
+    public void Nuevo()
     {
-        AspNetUsers = new AspNetUsers();
-        selectedClaim = string.Empty;
-    }
 
-    private void Volver()
+    }
+    public void Volver()
     {
-        NavigationManager.NavigateTo("/Usuario/Index");
+        
     }
 }
+

@@ -2,14 +2,13 @@
 @inject UsersInterface<AspNetUsers> userService
 <h3>Index</h3>
 @using UsersBlazorApp.Data.Models;
-
 <EditForm Model="ListaUsuarios" class="border shadow-lg p-3 rounded">
     <div class="card-header bg-primary text-white text-center py-2 rounded">
         <h3 style="font-weight: bold;" class="mb-0 font-weight-bold">Consulta Usuarios</h3>
     </div>
     <div class="card-body">
         <div class="row mb-3 align-items-end">
-            @*Filtro*@
+
             <div class="col-md-3">
                 <label for="Filtro" class="form-label">Filtrar por:</label>
                 <select @bind="filtro" class="form-select">
@@ -20,7 +19,7 @@
                 </select>
             </div>
 
-            @*Barra Busqueda*@
+
             <div class="col-md-6">
                 <label for="ValorFiltro" class="form-label">Búsqueda:</label>
                 <div class="input-group">
@@ -31,14 +30,13 @@
                 </div>
             </div>
 
-            @*Boton Crear*@
+
             <div class="col-md-3 text-end">
                 <a href="/Usuario/Create" class="btn btn-success" type="button"><span class="bi bi-floppy"></span> Crear </a>
             </div>
         </div>
     </div>
 
-    @*Tabla*@
     <table class="table table-bordered text-center">
         <thead class="bg-primary text-white">
             <tr>
@@ -53,14 +51,14 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var usuario in ListaUsuarios)
+            @foreach(var usuario in ListaUsuarios)
             {
                 <tr>
-                     <td>@usuario.Id</td>
+                    <td>@usuario.Id</td>
                     <td>@usuario.UserName</td>
                     <td>@usuario.Email</td>
                     <td>@usuario.PhoneNumber</td>
-                    
+
                     <td>
 
                         @*Boton Details*@
@@ -84,10 +82,11 @@
                     </td>
                 </tr>
             }
+
         </tbody>
     </table>
 </EditForm>
-@code {
+@code{
     public List<AspNetUsers> ListaUsuarios { get; set; } = new List<AspNetUsers>();
     private string valorFiltro = "";
     private string filtro = "Id";
@@ -97,6 +96,8 @@
     }
     public void Buscar()
     {
-        
+
     }
 }
+
+
