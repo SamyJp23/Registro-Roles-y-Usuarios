@@ -23,7 +23,7 @@ public class UserRoleController : ControllerBase
     }
 
    
-    [HttpGet]
+  
     [HttpGet]
     public async Task<ActionResult<List<UserRoleDto>>> GetUserRoles()
     {
@@ -36,8 +36,6 @@ public class UserRoleController : ControllerBase
         return Ok(userRoles);
     }
 
-
-    [HttpPost]
     [HttpPost]
     public async Task<ActionResult<UserRoleDto>> PostUserRole(UserRoleDto userRolDto)
     {

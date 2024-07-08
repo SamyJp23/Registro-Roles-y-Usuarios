@@ -13,7 +13,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7097/") });
 builder.Services.AddScoped<UsersInterface<UserResponse>, UserService>();
 
-builder.Services.AddScoped<UsersInterface<AspNetRoles>, RoleService>();
+builder.Services.AddScoped<UsersInterface<RolResponse>, RoleService>();
 builder.Services.AddScoped<UsersInterface<AspNetUserRoles>, UserRoleService>();
 
 

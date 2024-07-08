@@ -1,6 +1,6 @@
-﻿@page "/Roles/Index"
+﻿@page "/Rol/Index"
 <h3>Index</h3>
-@inject UsersInterface<AspNetRoles> roleService
+@inject UsersInterface<RolResponse> roleService
 
 <EditForm Model="ListaRoles" class="border shadow-lg p-3 rounded">
     <div class="card-header bg-primary text-white text-center py-2 rounded">
@@ -15,8 +15,7 @@
                 <select @bind="filtro" class="form-select">
                     <option value="id">ID</option>
                     <option value="nombre">Nombre</option>
-                    <option value="sueldo">Sueldo</option>
-                    <option value="tipo">Tipo</option>
+                    
                 </select>
             </div>
 
@@ -44,10 +43,6 @@
             <tr>
                 <th>Id</th>
                 <th>Nombre</th>
-                <th>Email</th>
-                <th>Claim</th>
-                <th>Ver</th>
-                <th>Editar</th>
                 <th>Eliminar</th>
             </tr>
         </thead>
@@ -62,25 +57,13 @@
                    
                     
 
-                    <td>
-
-                        @*Boton Details*@
-                        <a href= style="border: none; background-color: transparent;" class="btn-detalle">
-                            <span class="bi bi-info-circle-fill" style="font-size: 2rem;"></span>
-                        </a>
-
-                    </td>
-                    <td>
-                        @*Boton Editar*@
-                        <a href= style="border: none; background-color: transparent;" class="btn-editar">
-                            <span class="bi bi-marker-tip" style="font-size: 2rem;"></span>
-                        </a>
-                    </td>
+                    
+                    
 
                     <td>
                         @*Boton Eliminar*@
-                        <a href= style="border: none; background-color: transparent;" class="btn-eliminar">
-                            <span class="bi bi-dash-circle-fill" style="font-size: 2rem;"></span>
+                        <a href="/Rol/Delete/@roles.Id" style="border: none; background-color: transparent;" class="btn-eliminar">
+                            <span class="bi bi-trash" style="font-size: 2rem;"></span>
                         </a>
                     </td>
                 </tr>
@@ -89,7 +72,7 @@
     </table>
 </EditForm>
 @code {
-    public List<AspNetRoles> ListaRoles { get; set; } = new List<AspNetRoles>();
+    public List<RolResponse> ListaRoles { get; set; } = new List<RolResponse>();
     private string valorFiltro = "";
     private string filtro = "Id";
     protected override async Task OnInitializedAsync()

@@ -51,7 +51,7 @@ public class UserService : UsersInterface<UserResponse>
 
     public async Task<bool> DeleteAsync(int id)
     {
-        var response = await _httpClient.DeleteAsync($"api/Users/{id}");
+        var response = await _httpClient.DeleteAsync($"https://localhost:7097/api/User/{id}");
         return response.IsSuccessStatusCode;
     }
     public async Task<bool> UpdateUserRequestAsync(UserRequest entity)

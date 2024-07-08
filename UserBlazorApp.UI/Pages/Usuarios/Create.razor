@@ -2,7 +2,7 @@
 @using UserBlazorApp.UI.Dto;
 @inject NavigationManager navigationManager
 @inject UsersInterface<UserResponse> userService
-@inject UsersInterface<AspNetRoles> roleService
+@inject UsersInterface<RolResponse> roleService
 @inject UsersInterface<AspNetUserRoles> userRoleService
 <EditForm Model="Usuarios" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
@@ -46,7 +46,7 @@
                                     <td>@role.Name</td>
                                     <td>
                                           <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="role-@role.Id" @bind="roleSelections[role.Id]">
+                                            <input class="form-check-input" type="checkbox" id="role-@role.Id" @bind="rolSeleccionado[role.Id]">
                         <label class="form-check-label" for="role-@role.Id"></label>
                         </div>
                                     </td>
@@ -71,17 +71,26 @@
 </EditForm>
 
 @code{
+    [Inject] protected ToastService toastService { get; set; }
     public UserResponse Usuarios { get; set; } = new UserResponse();
-    public List<AspNetRoles> ListaRoles { get; set; } = new List<AspNetRoles>();
-    private Dictionary<int, bool> roleSelections = new Dictionary<int, bool>();
+    public List<RolResponse> ListaRoles { get; set; } = new List<RolResponse>();
+    private Dictionary<int, bool> rolSeleccionado = new Dictionary<int, bool>();
 
     protected override async Task OnInitializedAsync()
     {
         ListaRoles = await roleService.GetAllAsync();
         foreach (var role in ListaRoles)
         {
-            roleSelections[role.Id] = false;
+            rolSeleccionado[role.Id] = false;
         }
+    }
+    public void NotificacionGuardo()
+    {
+        toastService.Notify(new(ToastType.Success, $"Se guardo correctamente"));
+    }
+    public void NotificacionError()
+    {
+        toastService.Notify(new(ToastType.Danger, $"Error al guardar."));
     }
     public async Task Guardar()
     {
@@ -94,6 +103,7 @@
             };
 
         var guardar = await userService.AddAsync(user);
+
         foreach (var roleSelection in roleSelections)
         {
             if (roleSelection.Value)
@@ -107,14 +117,18 @@
                 await userRoleService.AddAsync(userRole);
             }
         }
+        NotificacionGuardo();
+        Volver();
     }
 
     public void Nuevo()
     {
-
+        this.Usuarios = new UserResponse();
     }
     public void Volver()
     {
+        
+            navigationManager.NavigateTo("/Usuario/Index/");
         
     }
 }

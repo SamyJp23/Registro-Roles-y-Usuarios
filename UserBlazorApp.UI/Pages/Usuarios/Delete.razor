@@ -1,0 +1,100 @@
+﻿@page "/Usuario/Delete/"
+@page "/Usuario/Delete/{Id:int}"
+@inject UsersInterface<UserResponse> userService
+@inject NavigationManager navigationManager
+
+@if (Usuario != null)
+{
+    <div class="container">
+        <div class="card shadow-header">
+            <div class="card-header bg-primary text-white text-center py-2 rounded">
+                <h3><strong>Eliminar Usuario</strong></h3>
+            </div>
+            <div class="card-header">
+                <h3 class="text-danger text-center">¿Estás seguro de que quieres eliminar el siguiente Usuario?</h3>
+            </div>
+
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="card shadow-lg">
+                            <div class="card-header text-center">
+                                <h3><strong>Datos del usuario</strong></h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="border-primary border-2 p-3 rounded">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-8 offset-md-2">
+                                                <ul class="list-unstyled">
+                                                    <li><strong>Id:</strong> @Usuario.Id</li>
+                                                    <li><strong>Nombre:</strong> @Usuario.UserName</li>
+                                                    <li><strong>Email:</strong> @Usuario.Email</li>
+                                                    <li><strong>Teléfono:</strong> @Usuario.PhoneNumber</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer text-center">
+                                <button type="button" class="btn btn-outline-danger" @onclick="Eliminar"><i class="bi bi-trash-fill"></i> Eliminar</button>
+                                <button type="button" class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left"></i> Volver</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <p>No se encontró el Usuario</p>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    public UserResponse? Usuario { get; set; } = new UserResponse();
+    [Inject] protected ToastService toastService { get; set; }
+
+    public void NotificacionGuardo()
+    {
+        toastService.Notify(new(ToastType.Success, $"Se Elimino el Usuario correctamente"));
+    }
+    public void NotificacionError()
+    {
+        toastService.Notify(new(ToastType.Danger, $"Error al Eliminar el Usuario."));
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id != 0)
+        {
+            Usuario = await userService.GetByIdAsync(Id);
+        }
+    }
+
+    public async Task Eliminar()
+    {
+        if (Usuario != null)
+        {
+            var eliminado = await userService.DeleteAsync(Usuario.Id);
+            if (eliminado)
+            {
+                NotificacionGuardo();
+                Volver();
+            }
+            else
+            {
+                NotificacionError();
+            }
+
+        }
+    }
+
+    public void Volver()
+    {
+        navigationManager.NavigateTo("/Usuario/Index");
+    }
+}

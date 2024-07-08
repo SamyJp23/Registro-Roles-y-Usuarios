@@ -1,7 +1,7 @@
 ﻿@page "/Usuario/Index"
 @inject UsersInterface<UserResponse> userService
+@inject NavigationManager navigationManager
 @using UserBlazorApp.UI.Dto;
-<h3>Index</h3>
 @using UsersBlazorApp.Data.Models;
 <EditForm Model="ListaUsuarios" class="border shadow-lg p-3 rounded">
     <div class="card-header bg-primary text-white text-center py-2 rounded">
@@ -15,8 +15,9 @@
                 <select @bind="filtro" class="form-select">
                     <option value="id">ID</option>
                     <option value="nombre">Nombre</option>
-                    <option value="sueldo">Sueldo</option>
-                    <option value="tipo">Tipo</option>
+                    <option value="email">Email</option>
+                    <option value="numero">Telefono</option>
+                    <option value="rol">Rol</option>
                 </select>
             </div>
 
@@ -85,8 +86,8 @@
 
                     <td>
                         @*Boton Eliminar*@
-                        <a href= style="border: none; background-color: transparent;" class="btn-eliminar">
-                            <span class="bi bi-dash-circle-fill" style="font-size: 2rem;"></span>
+                        <a href="/Usuario/Delete/@usuario.Id" style="border: none; background-color: transparent;" class="btn-eliminar">
+                            <span class="bi bi-trash" style="font-size: 2rem;"></span>
                         </a>
                     </td>
                 </tr>
@@ -103,6 +104,7 @@
     {
         ListaUsuarios = await userService.GetAllAsync();
     }
+   
     public void Buscar()
     {
 

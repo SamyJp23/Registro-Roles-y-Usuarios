@@ -1,0 +1,80 @@
+﻿@page "/Rol/Delete/"
+@page "/Rol/Delete/{Id:int}"
+@inject UsersInterface<RolResponse> roleService
+@inject NavigationManager navigationManager
+
+@if (Rol != null)
+{
+    <div class="container">
+        <div class="card shadow-header">
+            <div class="card-header bg-primary text-white text-center py-2 rounded">
+                <h3><strong>Eliminar Rol</strong></h3>
+            </div>
+            <div class="card-header">
+                <h3 class="text-danger text-center">¿Estás seguro de que quieres eliminar el siguiente Rol?</h3>
+            </div>
+
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="card shadow-lg">
+                            <div class="card-header text-center">
+                                <h3><strong>Datos del rol</strong></h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="border-primary border-2 p-3 rounded">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-8 offset-md-2">
+                                                <ul class="list-unstyled">
+                                                    <li><strong>Id:</strong> @Rol.Id</li>
+                                                    <li><strong>Nombre:</strong> @Rol.Name</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer text-center">
+                                <button type="button" class="btn btn-outline-danger" @onclick="Eliminar"><i class="bi bi-trash-fill"></i> Eliminar</button>
+                                <button type="button" class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left"></i> Volver</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <p>No se encontró el Rol</p>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    public RolResponse? Rol { get; set; } = new RolResponse();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id != 0)
+        {
+            Rol = await roleService.GetByIdAsync(Id);
+        }
+    }
+
+    public async Task Eliminar()
+    {
+        if (Rol != null)
+        {
+            var eliminado = await roleService.DeleteAsync(Rol.Id);
+            Volver();
+        }
+    }
+
+    public void Volver()
+    {
+        navigationManager.NavigateTo("/Rol/Index");
+    }
+}

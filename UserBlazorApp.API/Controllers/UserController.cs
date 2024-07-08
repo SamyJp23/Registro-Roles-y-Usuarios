@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +23,7 @@ namespace UserBlazorApp.API.Controllers
             _context = context;
         }
 
-        
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserResponse>>> GetUsers()
         {
@@ -60,8 +61,6 @@ namespace UserBlazorApp.API.Controllers
                 UserName = userRequest.UserName,
                 Email = userRequest.Email,
                 PhoneNumber = userRequest.PhoneNumber,
-
-
             };
 
             _context.AspNetUsers.Add(user);
@@ -104,6 +103,7 @@ namespace UserBlazorApp.API.Controllers
 
             return Ok(userResponse);
         }
+
         [HttpPut("{id}")]
         public async Task<ActionResult<UserResponse>> UpdateUser(int id, UserRequest userRequest)
         {
@@ -121,46 +121,31 @@ namespace UserBlazorApp.API.Controllers
             {
                 return NotFound();
             }
-            
+
             user.UserName = userRequest.UserName;
             user.Email = userRequest.Email;
             user.PhoneNumber = userRequest.PhoneNumber;
 
-            var existe = user.AspNetUserRoles.Select(ur => ur.RoleId).ToList();
-            var newRoleIds = userRequest.RoleIds ?? new List<int>();
+            var existingRoleIds = user.AspNetUserRoles.Select(ur => ur.RoleId).ToList();
 
-          
+            var rolesIds = userRequest.RoleIds ?? new List<int>();
+
             var removerRol = user.AspNetUserRoles
-                                    .Where(ur => !newRoleIds.Contains(ur.RoleId))
+                                    .Where(ur => !rolesIds.Contains(ur.RoleId))
                                     .ToList();
             _context.AspNetUserRoles.RemoveRange(removerRol);
 
-           
-            var agregarRol = newRoleIds
-                             .Where(roleId => !existe.Contains(roleId))
+            var rolesToAdd = rolesIds
+                             .Where(roleId => !existingRoleIds.Contains(roleId))
                              .Select(roleId => new AspNetUserRoles
                              {
                                  UserId = user.Id,
                                  RoleId = roleId
                              })
                              .ToList();
-            await _context.AspNetUserRoles.AddRangeAsync(agregarRol);
+            await _context.AspNetUserRoles.AddRangeAsync(rolesToAdd);
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _context.SaveChangesAsync();
 
             var userResponse = new UserResponse
             {
@@ -177,6 +162,26 @@ namespace UserBlazorApp.API.Controllers
 
             return Ok(userResponse);
 
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            var user = await _context.AspNetUsers
+                                     .Include(u => u.AspNetUserRoles)
+                                     .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            _context.AspNetUserRoles.RemoveRange(user.AspNetUserRoles);
+            _context.AspNetUsers.Remove(user);
+
+            await _context.SaveChangesAsync();
+
+            var userResponse = user.Adapt<UserResponse>();
+            return Ok(userResponse);
         }
         private bool UserExists(int id)
         {
