@@ -44,7 +44,7 @@
         var guardar = await roleService.AddAsync(Rol);
         NotificacionGuardo();
         Volver();
-        
+
     }
 
     public void NotificacionGuardo()
@@ -55,10 +55,10 @@
     {
         toastService.Notify(new(ToastType.Danger, $"Error al Guardar el Rol."));
     }
-    
+
     public void Nuevo()
     {
-
+        this.Rol = new RolResponse();
     }
     public void Volver()
     {

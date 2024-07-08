@@ -1,5 +1,5 @@
 ﻿@page "/Rol/Index"
-<h3>Index</h3>
+
 @inject UsersInterface<RolResponse> roleService
 
 <EditForm Model="ListaRoles" class="border shadow-lg p-3 rounded">
@@ -63,7 +63,7 @@
                     <td>
                         @*Boton Eliminar*@
                         <a href="/Rol/Delete/@roles.Id" style="border: none; background-color: transparent;" class="btn-eliminar">
-                            <span class="bi bi-trash" style="font-size: 2rem;"></span>
+                            <span class="bi bi-trash-fill" style="color: red; font-size: 2rem;"></span>
                         </a>
                     </td>
                 </tr>
