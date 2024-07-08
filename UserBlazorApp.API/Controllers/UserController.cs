@@ -24,10 +24,27 @@ namespace UserBlazorApp.API.Controllers
 
         // GET: User
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AspNetUsers>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UserResponse>>> GetUsers()
         {
-            var users = await _context.AspNetUsers.ToListAsync();
-            return Ok(users);
+            var users = await _context.AspNetUsers
+                                .Include(u => u.AspNetUserRoles)
+                                .ThenInclude(ur => ur.Role)
+                                .ToListAsync();
+
+            var userResponses = users.Select(u => new UserResponse
+            {
+                Id = u.Id,
+                UserName = u.UserName,
+                Email = u.Email,
+                PhoneNumber = u.PhoneNumber,
+                Roles = u.AspNetUserRoles.Select(ur => new RolResponse
+                {
+                    Id = ur.Role.Id,
+                    Name = ur.Role.Name
+                }).ToList()
+            }).ToList();
+
+            return Ok(userResponses);
         }
 
         [HttpPost]
@@ -56,6 +73,33 @@ namespace UserBlazorApp.API.Controllers
                 UserName = user.UserName,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber
+            };
+
+            return Ok(userResponse);
+        }
+        [HttpGet("{id}")]
+        public async Task<ActionResult<UserResponse>> GetUserById(int id)
+        {
+            var user = await _context.AspNetUsers
+                                     .Include(u => u.Role)
+                                     .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var userResponse = new UserResponse
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Roles = user.Role.Select(r => new RolResponse
+                {
+                    Id = r.Id,
+                    Name = r.Name
+                }).ToList()
             };
 
             return Ok(userResponse);

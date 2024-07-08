@@ -7,5 +7,5 @@ public class UserResponse
         public string? Email { get; set; }
 
         public string? PhoneNumber { get; set; }
-    public List<string> Roles { get; set; } = new List<string>();
+    public List<RolResponse> Roles { get; set; } = new List<RolResponse>();
 }

@@ -1,10 +1,11 @@
 ﻿using System.Net.Http.Json;
 using UsersBlazorApp.Data.Interfaces;
 using UsersBlazorApp.Data.Models;
+using UserBlazorApp.UI.Dto;
 
 namespace UserBlazorApp.UI.Services;
 
-public class UserService : UsersInterface<AspNetUsers>
+public class UserService : UsersInterface<UserResponse>
 {
     private readonly HttpClient _httpClient;
 
@@ -12,23 +13,36 @@ public class UserService : UsersInterface<AspNetUsers>
     {
         _httpClient = httpClient;
     }
-    public async Task<List<AspNetUsers>> GetAllAsync()
+    public async Task<List<UserResponse>> GetAllAsync()
     {
-        return (await _httpClient.GetFromJsonAsync<List<AspNetUsers>>("https://localhost:7097/api/User"))!;
+        var users = await _httpClient.GetFromJsonAsync<List<AspNetUsers>>("https://localhost:7097/api/User");
+        return users.Select(user => new UserResponse
+        {
+            Id = user.Id,
+            UserName = user.UserName,
+            Email = user.Email,
+            PhoneNumber = user.PhoneNumber,
+            Roles = user.Role.Select(role => new RolResponse
+            {
+                Id = role.Id,
+                Name = role.Name
+            }).ToList()
+        }).ToList();
     }
 
-    public async Task<AspNetUsers> GetByIdAsync(int id)
+    public async Task<UserResponse> GetByIdAsync(int id)
     {
-        return (await _httpClient.GetFromJsonAsync<AspNetUsers>($"api/Users/{id}"))!;
+        var response = await _httpClient.GetFromJsonAsync<UserResponse>($"https://localhost:7097/api/User/{id}");
+        return response;
     }
 
-    public async Task<AspNetUsers> AddAsync(AspNetUsers entity)
+    public async Task<UserResponse> AddAsync(UserResponse entity)
     {
         var response = await _httpClient.PostAsJsonAsync("https://localhost:7097/api/User", entity);
-        return (await response.Content.ReadFromJsonAsync<AspNetUsers>())!;
+        return (await response.Content.ReadFromJsonAsync<UserResponse>())!;
     }
 
-    public async Task<bool> UpdateAsync(AspNetUsers entity)
+    public async Task<bool> UpdateAsync(UserResponse entity)
     {
         var response = await _httpClient.PutAsJsonAsync($"api/Users/{entity.Id}", entity);
         return response.IsSuccessStatusCode;

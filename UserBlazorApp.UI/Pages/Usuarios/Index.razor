@@ -1,5 +1,6 @@
 ﻿@page "/Usuario/Index"
-@inject UsersInterface<AspNetUsers> userService
+@inject UsersInterface<UserResponse> userService
+@using UserBlazorApp.UI.Dto;
 <h3>Index</h3>
 @using UsersBlazorApp.Data.Models;
 <EditForm Model="ListaUsuarios" class="border shadow-lg p-3 rounded">
@@ -58,18 +59,26 @@
                     <td>@usuario.UserName</td>
                     <td>@usuario.Email</td>
                     <td>@usuario.PhoneNumber</td>
+                    <td>
+                        @foreach (var rol in usuario.Roles)
+                        {
+                            <span>@rol.Id</span>
+
+                            <br />
+                        }
+                    </td>
 
                     <td>
 
                         @*Boton Details*@
-                        <a href= style="border: none; background-color: transparent;" class="btn-detalle">
+                        <a  style="border: none; background-color: transparent;" class="btn-detalle">
                             <span class="bi bi-info-circle-fill" style="font-size: 2rem;"></span>
                         </a>
 
                     </td>
                     <td>
                         @*Boton Editar*@
-                        <a href= style="border: none; background-color: transparent;" class="btn-editar">
+                        <a href ="/Usuario/Edit/@usuario.Id" style="border: none; background-color: transparent;" class="btn-editar">
                             <span class="bi bi-marker-tip" style="font-size: 2rem;"></span>
                         </a>
                     </td>
@@ -87,7 +96,7 @@
     </table>
 </EditForm>
 @code{
-    public List<AspNetUsers> ListaUsuarios { get; set; } = new List<AspNetUsers>();
+    public List<UserResponse> ListaUsuarios { get; set; } = new List<UserResponse>();
     private string valorFiltro = "";
     private string filtro = "Id";
     protected override async Task OnInitializedAsync()

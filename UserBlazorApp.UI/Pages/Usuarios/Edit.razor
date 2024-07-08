@@ -1,16 +1,19 @@
-﻿@page "/Usuario/Create"
-@using UserBlazorApp.UI.Dto;
+﻿@page "/Usuario/Edit"
+@page "/Usuario/Edit/{UserId:int}"
+@using UserBlazorApp.UI.Dto
 @inject NavigationManager navigationManager
 @inject UsersInterface<UserResponse> userService
 @inject UsersInterface<AspNetRoles> roleService
 @inject UsersInterface<AspNetUserRoles> userRoleService
+
+
 <EditForm Model="Usuarios" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
     <div class="card shadow-lg border-0 rounded" style="background-color: #f8f9fa;">
         <div class="card-header bg-primary text-white" style="text-align: center;">
-            <h3> <i class="fas fa-clipboard-list"></i> Crear Usuario</h3>
+            <h3> <i class="fas fa-clipboard-list"></i> Editar Usuario</h3>
         </div>
         <div class="card-body">
             <div class="row"></div>
@@ -47,6 +50,7 @@
                                     <td>
                                         <input type="checkbox" @bind="roleSelections[role.Id]" />
                                     </td>
+
                                 </tr>
                             }
                         </tbody>
@@ -56,18 +60,20 @@
         </div>
         <div class="card-footer bg-light d-flex justify-content-center mt-3">
             <div class="btn-group">
-               
-                <button type="button" class="btn btn-outline-primary ml-2" @onclick="Nuevo"><span class="bi bi-plus"></span> Nuevo </button>
-               
+
+                <button type="button"  class="btn btn-outline-primary ml-2" @onclick="Nuevo"><span class="bi bi-plus"></span> Nuevo </button>
+
                 <button type="submit" class="btn btn-outline-success ml-2"><span class="bi bi-check-circle-fill"></span> Guardar </button>
-               
+
                 <button type="button" class="btn btn-outline-danger" @onclick="Volver"><span class="bi bi-arrow-bar-left"></span> Retroceder </button>
             </div>
         </div>
     </div>
 </EditForm>
 
-@code{
+@code {
+    [Parameter] 
+    public int UserId { get; set; }
     public UserResponse Usuarios { get; set; } = new UserResponse();
     public List<AspNetRoles> ListaRoles { get; set; } = new List<AspNetRoles>();
     private Dictionary<int, bool> roleSelections = new Dictionary<int, bool>();
@@ -75,45 +81,37 @@
     protected override async Task OnInitializedAsync()
     {
         ListaRoles = await roleService.GetAllAsync();
+        Usuarios = await userService.GetByIdAsync(UserId);
+
         foreach (var role in ListaRoles)
         {
-            roleSelections[role.Id] = false;
+            roleSelections[role.Id] = Usuarios.Roles.Any(r => r.Id == role.Id);
         }
     }
+
     public async Task Guardar()
     {
-        var user = new UserResponse
-            {
-                UserName = Usuarios.UserName,
-                Email = Usuarios.Email,
-                PhoneNumber = Usuarios.PhoneNumber,
-                Roles = new List<RolResponse>()
-            };
+        Usuarios.Roles = new List<RolResponse>();
 
-        var guardar = await userService.AddAsync(user);
         foreach (var roleSelection in roleSelections)
         {
             if (roleSelection.Value)
             {
-                var userRole = new AspNetUserRoles
-                    {
-                        UserId = guardar.Id,
-                        RoleId = roleSelection.Key
-                    };
-
-                // Aquí agregar el userRole al contexto y guardar cambios
-                await userRoleService.AddAsync(userRole);
+                Usuarios.Roles.Add(new RolResponse { Id = roleSelection.Key });
             }
         }
+
+        await userService.UpdateAsync(Usuarios);
+      
     }
 
     public void Nuevo()
     {
-
+       
     }
+
     public void Volver()
     {
         
     }
 }
-
