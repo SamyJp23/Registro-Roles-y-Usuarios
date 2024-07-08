@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace UsersBlazorApp.Data.Interfaces;
 
-public interface UsersInterface<U>
+public interface UsersInterface<T>
 {
-    Task<List<U>> GetAllAsync();
-    Task<U> GetByIdAsync(int id);
-    Task<U> AddAsync(U entity);
-    Task<bool> UpdateAsync(U entity);
+    Task<List<T>> GetAllAsync();
+    Task<T> GetByIdAsync(int id);
+    Task<T> AddAsync(T entity);
+    Task<bool> UpdateAsync(T entity);
     Task<bool> DeleteAsync(int id);
 }

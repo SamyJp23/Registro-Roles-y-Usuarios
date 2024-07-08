@@ -22,7 +22,7 @@ namespace UserBlazorApp.API.Controllers
             _context = context;
         }
 
-        // GET: User
+        
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserResponse>>> GetUsers()
         {
@@ -104,6 +104,84 @@ namespace UserBlazorApp.API.Controllers
 
             return Ok(userResponse);
         }
+        [HttpPut("{id}")]
+        public async Task<ActionResult<UserResponse>> UpdateUser(int id, UserRequest userRequest)
+        {
+            if (id != userRequest.Id)
+            {
+                return BadRequest();
+            }
 
+            var user = await _context.AspNetUsers
+                                     .Include(u => u.AspNetUserRoles)
+                                     .ThenInclude(ur => ur.Role)
+                                     .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+            
+            user.UserName = userRequest.UserName;
+            user.Email = userRequest.Email;
+            user.PhoneNumber = userRequest.PhoneNumber;
+
+            var existe = user.AspNetUserRoles.Select(ur => ur.RoleId).ToList();
+            var newRoleIds = userRequest.RoleIds ?? new List<int>();
+
+          
+            var removerRol = user.AspNetUserRoles
+                                    .Where(ur => !newRoleIds.Contains(ur.RoleId))
+                                    .ToList();
+            _context.AspNetUserRoles.RemoveRange(removerRol);
+
+           
+            var agregarRol = newRoleIds
+                             .Where(roleId => !existe.Contains(roleId))
+                             .Select(roleId => new AspNetUserRoles
+                             {
+                                 UserId = user.Id,
+                                 RoleId = roleId
+                             })
+                             .ToList();
+            await _context.AspNetUserRoles.AddRangeAsync(agregarRol);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!UserExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            var userResponse = new UserResponse
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Roles = user.AspNetUserRoles.Select(ur => new RolResponse
+                {
+                    Id = ur.Role.Id,
+                    Name = ur.Role.Name
+                }).ToList()
+            };
+
+            return Ok(userResponse);
+
+        }
+        private bool UserExists(int id)
+        {
+            return _context.AspNetUsers.Any(e => e.Id == id);
+        }
     }
 }
+

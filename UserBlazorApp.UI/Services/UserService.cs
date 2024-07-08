@@ -42,15 +42,21 @@ public class UserService : UsersInterface<UserResponse>
         return (await response.Content.ReadFromJsonAsync<UserResponse>())!;
     }
 
+
     public async Task<bool> UpdateAsync(UserResponse entity)
     {
-        var response = await _httpClient.PutAsJsonAsync($"api/Users/{entity.Id}", entity);
+        var response = await _httpClient.PutAsJsonAsync($"https://localhost:7097/api/User/{entity.Id}", entity);
         return response.IsSuccessStatusCode;
     }
 
     public async Task<bool> DeleteAsync(int id)
     {
         var response = await _httpClient.DeleteAsync($"api/Users/{id}");
+        return response.IsSuccessStatusCode;
+    }
+    public async Task<bool> UpdateUserRequestAsync(UserRequest entity)
+    {
+        var response = await _httpClient.PutAsJsonAsync($"https://localhost:7097/api/User/{entity.Id}", entity);
         return response.IsSuccessStatusCode;
     }
 

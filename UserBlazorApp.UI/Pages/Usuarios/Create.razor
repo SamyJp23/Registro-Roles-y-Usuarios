@@ -32,7 +32,7 @@
 
             <div class="card mt-3">
                 <div class="card-body">
-                    <table class="table table-bordered">
+                    <table class="table table-bordered text-center">
                         <thead class="bg-primary text-white">
                             <tr>
                                 <th>Rol</th>
@@ -45,7 +45,10 @@
                                 <tr>
                                     <td>@role.Name</td>
                                     <td>
-                                        <input type="checkbox" @bind="roleSelections[role.Id]" />
+                                          <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="role-@role.Id" @bind="roleSelections[role.Id]">
+                        <label class="form-check-label" for="role-@role.Id"></label>
+                        </div>
                                     </td>
                                 </tr>
                             }
@@ -101,7 +104,6 @@
                         RoleId = roleSelection.Key
                     };
 
-                // Aquí agregar el userRole al contexto y guardar cambios
                 await userRoleService.AddAsync(userRole);
             }
         }

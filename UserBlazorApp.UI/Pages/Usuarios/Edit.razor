@@ -1,11 +1,8 @@
-﻿@page "/Usuario/Edit"
-@page "/Usuario/Edit/{UserId:int}"
-@using UserBlazorApp.UI.Dto
+﻿@page "/Usuario/Edit/{id:int}"
 @inject NavigationManager navigationManager
 @inject UsersInterface<UserResponse> userService
 @inject UsersInterface<AspNetRoles> roleService
 @inject UsersInterface<AspNetUserRoles> userRoleService
-
 
 <EditForm Model="Usuarios" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
@@ -35,7 +32,7 @@
 
             <div class="card mt-3">
                 <div class="card-body">
-                    <table class="table table-bordered">
+                    <table class="table table-bordered text-center">
                         <thead class="bg-primary text-white">
                             <tr>
                                 <th>Rol</th>
@@ -48,9 +45,11 @@
                                 <tr>
                                     <td>@role.Name</td>
                                     <td>
-                                        <input type="checkbox" @bind="roleSelections[role.Id]" />
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="role-@role.Id" @bind="roleSelections[role.Id]">
+                                            <label class="form-check-label" for="role-@role.Id"></label>
+                                        </div>
                                     </td>
-
                                 </tr>
                             }
                         </tbody>
@@ -60,11 +59,8 @@
         </div>
         <div class="card-footer bg-light d-flex justify-content-center mt-3">
             <div class="btn-group">
-
-                <button type="button"  class="btn btn-outline-primary ml-2" @onclick="Nuevo"><span class="bi bi-plus"></span> Nuevo </button>
-
+                <button type="button" class="btn btn-outline-primary ml-2" @onclick="Nuevo"><span class="bi bi-plus"></span> Nuevo </button>
                 <button type="submit" class="btn btn-outline-success ml-2"><span class="bi bi-check-circle-fill"></span> Guardar </button>
-
                 <button type="button" class="btn btn-outline-danger" @onclick="Volver"><span class="bi bi-arrow-bar-left"></span> Retroceder </button>
             </div>
         </div>
@@ -72,46 +68,55 @@
 </EditForm>
 
 @code {
-    [Parameter] 
-    public int UserId { get; set; }
-    public UserResponse Usuarios { get; set; } = new UserResponse();
+    [Parameter] public int id { get; set; }
+    public UserRequest Usuarios { get; set; } = new UserRequest();
     public List<AspNetRoles> ListaRoles { get; set; } = new List<AspNetRoles>();
     private Dictionary<int, bool> roleSelections = new Dictionary<int, bool>();
 
     protected override async Task OnInitializedAsync()
     {
         ListaRoles = await roleService.GetAllAsync();
-        Usuarios = await userService.GetByIdAsync(UserId);
-
         foreach (var role in ListaRoles)
         {
-            roleSelections[role.Id] = Usuarios.Roles.Any(r => r.Id == role.Id);
+            roleSelections[role.Id] = false;
+        }
+
+        var userResponse = await userService.GetByIdAsync(id);
+        Usuarios.Id = userResponse.Id;
+        Usuarios.UserName = userResponse.UserName;
+        Usuarios.Email = userResponse.Email;
+        Usuarios.PhoneNumber = userResponse.PhoneNumber;
+        Usuarios.RoleIds = userResponse.Roles.Select(r => r.Id).ToList();
+
+        foreach (var roleId in Usuarios.RoleIds)
+        {
+            roleSelections[roleId] = true;
         }
     }
 
     public async Task Guardar()
     {
-        Usuarios.Roles = new List<RolResponse>();
+        Usuarios.RoleIds = new List<int>();
 
         foreach (var roleSelection in roleSelections)
         {
             if (roleSelection.Value)
             {
-                Usuarios.Roles.Add(new RolResponse { Id = roleSelection.Key });
+                Usuarios.RoleIds.Add(roleSelection.Key);
             }
         }
 
-        await userService.UpdateAsync(Usuarios);
-      
+        var userServiceNew = (UserService)userService;
+        await userServiceNew.UpdateUserRequestAsync(Usuarios);
     }
 
     public void Nuevo()
     {
-       
+      
     }
 
     public void Volver()
     {
-        
+        navigationManager.NavigateTo("/Usuario/Index");
     }
 }

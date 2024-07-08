@@ -22,7 +22,7 @@ public class UserRoleController : ControllerBase
         _context = context;
     }
 
-    // GET: UserRole
+   
     [HttpGet]
     [HttpGet]
     public async Task<ActionResult<List<UserRoleDto>>> GetUserRoles()
@@ -39,18 +39,18 @@ public class UserRoleController : ControllerBase
 
     [HttpPost]
     [HttpPost]
-    public async Task<ActionResult<UserRoleDto>> PostUserRole(UserRoleDto userRoleDto)
+    public async Task<ActionResult<UserRoleDto>> PostUserRole(UserRoleDto userRolDto)
     {
-        var userRole = new AspNetUserRoles
+        var userRol = new AspNetUserRoles
         {
-            UserId = userRoleDto.UserId,
-            RoleId = userRoleDto.RoleId
+            UserId = userRolDto.UserId,
+            RoleId = userRolDto.RoleId
         };
 
-        _context.AspNetUserRoles.Add(userRole);
+        _context.AspNetUserRoles.Add(userRol);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetUserRoles), new { userId = userRole.UserId, roleId = userRole.RoleId }, userRoleDto);
+        return CreatedAtAction(nameof(GetUserRoles), new { userId = userRol.UserId, roleId = userRol.RoleId }, userRolDto);
     }
-
+   
 }

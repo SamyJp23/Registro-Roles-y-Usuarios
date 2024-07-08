@@ -22,7 +22,7 @@ public class RoleController : ControllerBase
         _context = context;
     }
 
-    // GET: Role
+   
     [HttpGet]
     public async Task<IActionResult> Index()
     {
@@ -30,7 +30,7 @@ public class RoleController : ControllerBase
         return Ok(roles);
     }
     [HttpPost]
-    public async Task<ActionResult<RolResponse>> AddUser(RolRequest rolRequest)
+    public async Task<ActionResult<RolResponse>> AddRol(RolRequest rolRequest)
     {
         if (!ModelState.IsValid)
         {

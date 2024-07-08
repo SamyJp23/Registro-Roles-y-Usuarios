@@ -16,6 +16,7 @@ builder.Services.AddScoped<UsersInterface<UserResponse>, UserService>();
 builder.Services.AddScoped<UsersInterface<AspNetRoles>, RoleService>();
 builder.Services.AddScoped<UsersInterface<AspNetUserRoles>, UserRoleService>();
 
+
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
 await builder.Build().RunAsync();
